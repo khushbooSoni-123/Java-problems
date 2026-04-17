@@ -1,0 +1,32 @@
+import java.util.*;
+
+class Solution {
+    
+    private int reverseNum(int x) {
+        int rev = 0;
+        while (x > 0) {
+            rev = rev * 10 + x % 10;
+            x /= 10;
+        }
+        return rev;
+    }
+    
+    public int minMirrorPairDistance(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int minDist = Integer.MAX_VALUE;
+        
+        for (int i = 0; i < nums.length; i++) {
+            
+            // if current number exists as reversed earlier → mirror pair
+            if (map.containsKey(nums[i])) {
+                minDist = Math.min(minDist, i - map.get(nums[i]));
+            }
+            
+            // store reversed number with index
+            int rev = reverseNum(nums[i]);
+            map.put(rev, i);
+        }
+        
+        return minDist == Integer.MAX_VALUE ? -1 : minDist;
+    }
+}
