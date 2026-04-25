@@ -1,0 +1,75 @@
+import java.util.*;
+
+class Solution {
+    public int maxDistance(int side, int[][] points, int k) {
+        int n = points.length;
+        long per = 4L * side;
+
+        long[] pos = new long[n];
+
+        // Convert boundary → 1D perimeter position
+        for (int i = 0; i < n; i++) {
+            long x = points[i][0], y = points[i][1];
+            if (y == 0) pos[i] = x;                  // bottom
+            else if (x == side) pos[i] = side + y;  // right
+            else if (y == side) pos[i] = 3L * side - x; // top
+            else pos[i] = 4L * side - y;            // left
+        }
+
+        Arrays.sort(pos);
+
+        // duplicate for circular
+        long[] arr = new long[2*n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = pos[i];
+            arr[i+n] = pos[i] + per;
+        }
+
+        long lo = 0, hi = per, ans = 0;
+
+        while (lo <= hi) {
+            long mid = (lo + hi) / 2;
+            if (canPlace(arr, pos, per, n, k, mid)) {
+                ans = mid;
+                lo = mid + 1;
+            } else hi = mid - 1;
+        }
+
+        return (int)ans;
+    }
+
+    private boolean canPlace(long[] arr, long[] pos, long per, int n, int k, long dist) {
+        int j = 0;
+        int[] next = new int[2*n];
+
+        // build next jump using two pointers (O(n))
+        for (int i = 0; i < 2*n; i++) {
+            while (j < 2*n && arr[j] - arr[i] < dist) j++;
+            next[i] = j;
+        }
+
+        // try each starting point
+        for (int start = 0; start < n; start++) {
+            int cnt = 1;
+            int cur = start;
+
+            while (cnt < k) {
+                cur = next[cur];
+                if (cur >= start + n) break;
+                cnt++;
+            }
+
+            if (cnt < k) continue;
+
+            long firstPos = arr[start];
+            long lastPos  = arr[cur];
+
+            // circular gap check (MOST IMPORTANT FIX)
+            long wrapGap = per - (lastPos - firstPos);
+
+            if (wrapGap >= dist) return true;
+        }
+
+        return false;
+    }
+}
