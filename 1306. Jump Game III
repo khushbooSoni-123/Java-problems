@@ -1,0 +1,39 @@
+import java.util.*;
+
+class Solution {
+    public boolean canReach(int[] arr, int start) {
+        int n = arr.length;
+        boolean[] visited = new boolean[n];
+        Queue<Integer> queue = new LinkedList<>();
+        
+        queue.offer(start);
+        visited[start] = true;
+        
+        while (!queue.isEmpty()) {
+            int idx = queue.poll();
+            
+            // If we land on a zero, return true
+            if (arr[idx] == 0) {
+                return true;
+            }
+            
+            // Calculate possible jumps
+            int forward = idx + arr[idx];
+            int backward = idx - arr[idx];
+            
+            // Forward jump
+            if (forward < n && !visited[forward]) {
+                visited[forward] = true;
+                queue.offer(forward);
+            }
+            
+            // Backward jump
+            if (backward >= 0 && !visited[backward]) {
+                visited[backward] = true;
+                queue.offer(backward);
+            }
+        }
+        
+        return false; // No path to zero found
+    }
+}
