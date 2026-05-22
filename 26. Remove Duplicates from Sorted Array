@@ -1,0 +1,24 @@
+class Solution {
+    public int removeDuplicates(int[] nums) {
+        int i= 0 ; 
+        int unique = 1;
+         int compare = i+1 ;
+
+        while(compare < nums.length ){
+    
+            if(nums[compare] != nums[i]){
+                unique++;
+                nums[i+1] = nums[compare] ;
+                i++;
+            }
+            else{
+                compare++ ;
+            }
+           
+           
+        } 
+
+        return unique ;
+
+    }
+}
